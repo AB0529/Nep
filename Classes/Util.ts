@@ -195,7 +195,7 @@ export default class Util {
             dispatcher.setVolume(!q.volume ? 1 : Math.floor(q.volume) / 100);
 
             // Handle sound end
-            dispatcher.on('finish', () => {
+            dispatcher.on('close', () => {
                 setTimeout(async () => {
                     q = await this.update_queue([...q.slice(0, 0), ...q.slice(0 + 1)]);
                     this.play_queue(q);
