@@ -2,7 +2,7 @@ import {
   Config
 } from '../types';
 import fs from 'fs';
-
+import mongoose from 'mongoose'
 import config from '../config';
 import {
   Client,
@@ -14,6 +14,7 @@ import Command from './Command';
 import Util from './Util';
 
 import 'colors'
+import ServerModel, { IServers } from '../Models/ServerModel';
 
 export default class Neptune extends Client {
   public config: Config;
@@ -21,6 +22,7 @@ export default class Neptune extends Client {
   public commands: Commands;
   public util: Util;
   public prefix: string;
+  public servers: IServers;
 
   constructor(opts: ClientOptions) {
     // Client config
@@ -32,6 +34,7 @@ export default class Neptune extends Client {
     this.prefix = this.config.discord.prefix;
     this.util = new Util(this);
     this.exit_code = null;
+    this.servers;
   }
 
   // --------------------------------------------------
@@ -44,6 +47,8 @@ export default class Neptune extends Client {
     this.load_commands();
     // Load all events
     this.load_events();
+    // Mongo connection
+    this.mongo_connect();
 
     // Login
     super.login(token);
@@ -51,6 +56,27 @@ export default class Neptune extends Client {
 
   // --------------------------------------------------
 
+  // Connects to MongoDB
+  public mongo_connect() {
+    const user = this.config.mongo.user;
+    const db = this.config.mongo.db;
+    const pass = this.config.mongo.password;
+    const ip = this.config.mongo.ip;
+
+    mongoose.connect(`mongodb://${user}:${pass}@${ip}/${db}`, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: true,
+    }, (err) => {
+      if (err)
+        return this.util.error(`${err.message}`, 'mongo_connect()', true);
+      
+      this.util.log('Mongo', `Mongo connection ${'successfull'.green}`);
+    });
+  }
+
+  // --------------------------------------------------
+  
   // Exit process with exit code provided
   public stop(exit_code: number = config.codes.STOP) {
     this.util.log('Process', `Process terminating with exit code ${`${exit_code}`.yellow}`);

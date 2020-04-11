@@ -5,6 +5,12 @@ export interface Config {
         token: string,
         owner_id: string | Array<string>
     },
+    mongo: {
+        user: string,
+        password: string,
+        db: string,
+        ip: string
+    },
     codes: {
         STOP: number,
         ERROR: number,

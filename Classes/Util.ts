@@ -29,7 +29,7 @@ export default class Util {
         if (!log && this.msg)
             return
 
-        console.log(`[${'ERROR'.red}]`)
+        console.log(`[${'ERROR'.red}] '${error}' ${where.yellow}`)
     }
 
     // --------------------------------------------------
