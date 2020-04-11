@@ -6,6 +6,7 @@ import {
 
 import 'colors'
 import db, { IServers } from '../Models/Server_Model';
+import { Video } from '../types';
 
 export default class Util {
     public nep: Neptune;
@@ -92,7 +93,7 @@ export default class Util {
     // --------------------------------------------------
 
     // Returns the queue for the guild
-    public async get_queue(id: string) {
+    public async get_queue(id: string): Promise<Array<any>> {
         return new Promise((resolve) => {
             // Look for guild in db
             this.nep.servers.findOne({ guild_id: id }, (err, res: IServers) => {
@@ -109,6 +110,32 @@ export default class Util {
                 resolve(res.queue);
             });
         });
+    }
+
+    // --------------------------------------------------
+
+    public async update_queue(queue: Array<Video>): Promise<Array<any>> {
+        const q = await this.get_queue(this.msg.guild.id);
+        
+        return new Promise(async (resolve) => {
+            // Don't update if the queue is the sames
+            if (q == queue) {
+                console.log('Same')
+                return resolve(queue);
+            }
+            
+            // Update old queue with new one and return it
+            this.nep.servers.findOneAndUpdate({ guild_id: this.msg.guild.id }, {$set: {queue: queue}}, (err, resp) => {
+                if (err)
+                    return this.error(err, 'update_queue()', true);
+                
+                resp.save();                
+            });
+
+            return resolve(await this.get_queue(this.msg.guild.id));
+
+        });
+
     }
 
     // --------------------------------------------------

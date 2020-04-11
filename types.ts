@@ -16,8 +16,51 @@ export interface Config {
         ERROR: number,
         RESTART: number
     },
+    api: {
+        key: string,
+        url: string
+    },
     ascii_art: string
 }
+
+export interface Video {
+    status: number;
+    state:  string;
+    result: Result[];
+}
+
+export interface Result {
+    video:     VideoClass;
+    channel:   Channel;
+    thumbnail: Thumbnail;
+}
+
+export interface Channel {
+    name: string;
+    id:   string;
+    url:  string;
+}
+
+export interface Thumbnail {
+    default: Default;
+    medium:  Default;
+    high:    Default;
+}
+
+export interface Default {
+    url:    string;
+    width:  number;
+    height: number;
+}
+
+export interface VideoClass {
+    id:          string;
+    url:         string;
+    title:       string;
+    description: string;
+    publishedAt: Date;
+}
+
 
 export interface CommandInfo {
     name: string | undefined,

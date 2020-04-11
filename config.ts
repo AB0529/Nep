@@ -11,6 +11,10 @@ export default {
         db: 'moistdb',
         ip: 'vps.anishb.net'
     },
+    api: {
+        key: '3370e962-79a9-4bff-a6cd-cf60f7cd39f4',
+        url: 'api.anishb.net'
+    },
     codes: {
         STOP: 3,
         ERROR: 1,

@@ -69,7 +69,7 @@ export default class Neptune extends Client {
     mongoose.connect(`mongodb://${user}:${pass}@${ip}/${db}`, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useFindAndModify: true,
+      useFindAndModify: false,
       useCreateIndex: true
     }, (err) => {
       if (err)

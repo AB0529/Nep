@@ -29,7 +29,16 @@ export default class Cmd extends Command {
     public async run(msg: Message, args: any[], util: Util, nep: Neptune) {
         let queue = await util.get_queue(msg.guild.id);
 
-        msg.channel.send(`Queue: ${queue}`);
+        msg.channel.send(`0. Queue: ${queue}`);
+
+        queue.push(Math.floor(Math.random() * (999 - 1)) + 1)
+
+        msg.channel.send(`1. Queue: ${queue}`);
+
+        queue = await util.update_queue(queue);
+
+        msg.channel.send(`2. Queue: ${queue}`);
+
     }
 
 }
