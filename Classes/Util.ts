@@ -100,12 +100,12 @@ export default class Util {
                 if (err)
                     return this.error(err, 'get_queue()', true);
                 
-                // If guild does not exist, add it
-                if (!res) {
-                    this.add_server(id);
+                // If guild does not exist, return empty array
+                // Message event will handle adding
+                if (!res) 
                     // Return empty queue
-                    resolve([]);
-                }
+                    return resolve([]);
+                    
                 // Return server queue
                 resolve(res.queue);
             });
