@@ -19,12 +19,8 @@ const run = async (nep: Neptune, msg: Message) => {
 				return nep.util.error(err, 'db.Servers.find()', true);
 			// If not, add it and update cache
 			if (!res) {
-				let Server = new db.Servers({
-					guild_id: msg.guild.id,
-				});
-
+				nep.util.add_server(msg.guild.id);
 				nep.servers_cache.push(msg.guild.id);
-				Server.save();
 			}
 		});
 

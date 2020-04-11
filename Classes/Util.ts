@@ -5,6 +5,7 @@ import {
 } from 'discord.js';
 
 import 'colors'
+import db, { IServers } from '../Models/Server_Model';
 
 export default class Util {
     public nep: Neptune;
@@ -79,9 +80,35 @@ export default class Util {
 
     // --------------------------------------------------
 
+    // Adds a guild to the database
+    public add_server(id: string) {
+        let Server = new db.Servers({
+            guild_id: id
+        });
+
+        Server.save();
+    }
+
+    // --------------------------------------------------
+
     // Returns the queue for the guild
-    public get_queue(id: string) {
-        this.nep.servers
+    public async get_queue(id: string) {
+        return new Promise((resolve) => {
+            // Look for guild in db
+            this.nep.servers.findOne({ guild_id: id }, (err, res: IServers) => {
+                if (err)
+                    return this.error(err, 'get_queue()', true);
+                
+                // If guild does not exist, add it
+                if (!res) {
+                    this.add_server(id);
+                    // Return empty queue
+                    resolve([]);
+                }
+                // Return server queue
+                resolve(res.queue);
+            });
+        });
     }
 
     // --------------------------------------------------

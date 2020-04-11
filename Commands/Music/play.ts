@@ -27,7 +27,9 @@ export default class Cmd extends Command {
     }
 
     public async run(msg: Message, args: any[], util: Util, nep: Neptune) {
-        msg.channel.send('Ok');
+        let queue = await util.get_queue(msg.guild.id);
+
+        msg.channel.send(`Queue: ${queue}`);
     }
 
 }
