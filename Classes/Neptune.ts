@@ -2,7 +2,7 @@ import {
   Config
 } from '../types';
 import fs from 'fs';
-import mongoose from 'mongoose'
+import mongoose, { Model } from 'mongoose'
 import config from '../config';
 import {
   Client,
@@ -14,7 +14,7 @@ import Command from './Command';
 import Util from './Util';
 
 import 'colors'
-import ServerModel, { IServers } from '../Models/ServerModel';
+import db from '../Models/Server_Model';
 
 export default class Neptune extends Client {
   public config: Config;
@@ -22,7 +22,8 @@ export default class Neptune extends Client {
   public commands: Commands;
   public util: Util;
   public prefix: string;
-  public servers: IServers;
+  public servers: Model<mongoose.Document>;
+  public servers_cache: Array<string>;
 
   constructor(opts: ClientOptions) {
     // Client config
@@ -34,7 +35,9 @@ export default class Neptune extends Client {
     this.prefix = this.config.discord.prefix;
     this.util = new Util(this);
     this.exit_code = null;
-    this.servers;
+
+    this.servers_cache = [];
+    this.servers = db.Servers;
   }
 
   // --------------------------------------------------
@@ -67,6 +70,7 @@ export default class Neptune extends Client {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useFindAndModify: true,
+      useCreateIndex: true
     }, (err) => {
       if (err)
         return this.util.error(`${err.message}`, 'mongo_connect()', true);

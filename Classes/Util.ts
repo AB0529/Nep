@@ -78,4 +78,11 @@ export default class Util {
     }
 
     // --------------------------------------------------
+
+    // Returns the queue for the guild
+    public get_queue(id: string) {
+        this.nep.servers
+    }
+
+    // --------------------------------------------------
 }

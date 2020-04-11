@@ -4,11 +4,30 @@ import {
 	Message, MessageEmbed
 } from 'discord.js';
 import Util from '../Classes/Util';
+import db from '../Models/Server_Model';
 
 const run = async (nep: Neptune, msg: Message) => {
 	// Ignore bot
 	if (msg.author.bot)
 		return;
+
+	// Check cache for guild
+	if (nep.servers_cache.indexOf(msg.guild.id) == -1)
+		// Check if guild exists in database
+		db.Servers.findOne({ guild_id: msg.guild.id }, (err, res) => {
+			if (err)
+				return nep.util.error(err, 'db.Servers.find()', true);
+			// If not, add it and update cache
+			if (!res) {
+				let Server = new db.Servers({
+					guild_id: msg.guild.id,
+				});
+
+				nep.servers_cache.push(msg.guild.id);
+				Server.save();
+			}
+		});
+
 
 	// Multiple prefixes
 	[nep.config.discord.prefix, `<@${nep.user.id}> `, `<@!${nep.user.id}> `].forEach(

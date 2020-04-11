@@ -11,7 +11,10 @@ export interface IServers extends Document {
 
 // Server
 const servers_schema = new Schema({
-    guild_id: String,
+    guild_id: {
+        type: String,
+        unique: true
+    },
     prefix: {
         type: String,
         default: config.discord.prefix
