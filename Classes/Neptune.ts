@@ -19,7 +19,6 @@ import 'colors'
 
 export default class Neptune extends Client {
   public config: Config;
-  public prefix: string;
   public exit_code: number | null;
   public commands: Commands;
   public util: Util;
@@ -27,16 +26,21 @@ export default class Neptune extends Client {
   constructor(opts: ClientOptions) {
     // Client config
     super(opts);
-    this.commands = new Commands();
-    this.util = new Util(this);
+    this.config = config;
 
     // Client variables
-    this.config = config;
-    this.prefix = this.config.discord.prefix;
+    this.commands = new Commands();
+    this.util = new Util(this);
     this.exit_code = null;
   }
 
   // --------------------------------------------------
+
+  // Get prefix from DB
+  public get prefix() {
+    // TODO: Connect this to database
+    return this.config.discord.prefix;
+  }
 
   // Start and initalize the bot
   public start(token: string) {
@@ -81,7 +85,7 @@ export default class Neptune extends Client {
 
       // Get commands in each category
       files.forEach((cmd) => {
-        const command: Command = new (require(`../Commands/${category}/${cmd}`).default)();
+        const command: Command = new (require(`../Commands/${category}/${cmd}`)).default(this);
 
         // Load the command and aliases
         this.commands.add_cmd(command);

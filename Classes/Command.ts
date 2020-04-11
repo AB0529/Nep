@@ -14,7 +14,7 @@ export default class Command {
 			// Command information
 			name: options.name || undefined,
 			help: options.help || 'No help specified.',
-			longHelp: options.longHelp || 'No long help specified.',
+			long_help: options.long_help || 'No long help specified.',
 			usage: options.usage || [],
 			examples: options.examples || [],
 			category: options.category || 'No category given.'
@@ -24,7 +24,7 @@ export default class Command {
 			// Command config
 			cooldown: options.cooldown || 5e2,
 			aliases: options.aliases || [],
-			allow_dm: options.allowDM || false,
+			allow_dm: options.allow_dm || false,
 			locked: options.locked || false
 		};
 		this.cooldown = new Set(); // Users on cooldown

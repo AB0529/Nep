@@ -16,7 +16,7 @@ export interface Config {
 export interface CommandInfo {
     name: string | undefined,
     help: Array<string> | string,
-    longHelp: Array<string> | string,
+    long_help: Array<string> | string,
     usage: Array<string> | Array<null> | string,
     examples: Array<string> | Array<null> | string,
     category: Array<string> | string
