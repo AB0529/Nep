@@ -23,16 +23,21 @@ export interface Config {
     ascii_art: string
 }
 
+export interface Queue extends Array<Result> {
+    volume?: number
+}
+
 export interface Video {
-    status: number;
-    state:  string;
-    result: Result[];
+    status: number,
+    state: string,
+    result: Array<Result>
 }
 
 export interface Result {
     video:     VideoClass;
     channel:   Channel;
     thumbnail: Thumbnail;
+    author: string
 }
 
 export interface Channel {
@@ -60,7 +65,6 @@ export interface VideoClass {
     description: string;
     publishedAt: Date;
 }
-
 
 export interface CommandInfo {
     name: string | undefined,

@@ -13,7 +13,7 @@ export default {
     },
     api: {
         key: '3370e962-79a9-4bff-a6cd-cf60f7cd39f4',
-        url: 'api.anishb.net'
+        url: 'https://api.anishb.net'
     },
     codes: {
         STOP: 3,

@@ -1,12 +1,16 @@
 import Neptune from './Neptune';
 import {
     Message,
-    MessageEmbed
+    MessageEmbed,
+    VoiceConnection,
+    StreamDispatcher,
 } from 'discord.js';
+import ytdl from 'ytdl-core';
+import he from 'he'
 
 import 'colors'
 import db, { IServers } from '../Models/Server_Model';
-import { Video } from '../types';
+import { Queue, Video } from '../types';
 
 export default class Util {
     public nep: Neptune;
@@ -29,7 +33,7 @@ export default class Util {
     // Error handling
     public error(error: any, where?: string, log: boolean = false) {
         if (!log && this.msg)
-            return
+            return this.embed(`<a:AngryGlitch:665756319172788229> | An error has occured\n\`\`\`css\n${error} (${where})\n\`\`\``);
 
         console.log(`[${'ERROR'.red}] '${error}' ${where.yellow}`)
     }
@@ -93,7 +97,7 @@ export default class Util {
     // --------------------------------------------------
 
     // Returns the queue for the guild
-    public async get_queue(id: string): Promise<Array<any>> {
+    public async get_queue(id: string): Promise<Queue> {
         return new Promise((resolve) => {
             // Look for guild in db
             this.nep.servers.findOne({ guild_id: id }, (err, res: IServers) => {
@@ -105,7 +109,7 @@ export default class Util {
                 if (!res) 
                     // Return empty queue
                     return resolve([]);
-                    
+
                 // Return server queue
                 resolve(res.queue);
             });
@@ -114,7 +118,7 @@ export default class Util {
 
     // --------------------------------------------------
 
-    public async update_queue(queue: Array<Video>): Promise<Array<any>> {
+    public async update_queue(queue: Queue): Promise<Queue> {
         const q = await this.get_queue(this.msg.guild.id);
         
         return new Promise(async (resolve) => {
@@ -133,6 +137,73 @@ export default class Util {
             });
 
             return resolve(await this.get_queue(this.msg.guild.id));
+
+        });
+
+    }
+
+    // --------------------------------------------------
+
+    // Plays the queue
+    public play_queue(q: Queue) {
+        // Handle queue finish
+        if (q.length == 0)
+            return this.nep.util.embed(`<:Sharcat:390652483577577483> | Queue has **finished playing**, see ya' later alligator!`)
+                    .then(() => {
+                        let vc: VoiceConnection = this.msg.guild.voice.connection;
+
+                        // Reset volume
+                        q.volume = 100;
+
+                        // Leave VC
+                        if (vc != null)
+                            this.msg.guild.me.voice.channel.leave();
+
+                    }).catch((err) => this.error(`VC Leave Error:\n${err}`, 'play_queue()'));
+        
+        // Join VC
+        new Promise(async (resolve) => {
+            let vc: VoiceConnection = this.msg.guild.me.voice.connection;
+
+            // Attemp to join VC
+            if (vc == null) {
+                // Join author if they're in channel
+                if (this.msg.member.voice.channel)
+                    return resolve(await this.msg.member.voice.channel.join());
+                return this.embed(`:x: | You're **not in a voice channel**, what do you want me to do?!`);
+            }
+
+            resolve(vc);
+        }).then((c: any) => {
+            // Sound handler
+            let video = q[0].video.url;
+            let stream = ytdl(video, {
+                filter: 'audioonly'
+            });
+            let dispatcher: StreamDispatcher = c.play(stream);
+
+            this.msg.channel.send({
+                embed: new MessageEmbed()
+                .setDescription(
+                    `<a:MikuDance:422159573344845844> | **Now playing** [${he.decode(q[0].video.title)}](${q[0].video.url}) **[<@${q[0].author}>]**`
+                )
+                .setColor(this.r_color)
+                .setThumbnail(q[0].thumbnail.default.url)
+            });
+
+            // Set volume
+            dispatcher.setVolume(!q.volume ? 1 : Math.floor(q.volume) / 100);
+
+            // Handle sound end
+            dispatcher.on('end', () => {
+                setTimeout(async () => {
+                    q.shift();
+                    q = await this.update_queue(q);
+                    await this.play_queue(q);
+                }, 1e3);
+            });
+            // Handle sound error
+            dispatcher.on('error', (err) => this.error(`Dispatcher error:\n${err}`, 'play_queue()'));
 
         });
 
