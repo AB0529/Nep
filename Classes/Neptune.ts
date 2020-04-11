@@ -1,19 +1,17 @@
 import {
   Config
-} from "../types";
-import fs from "fs";
+} from '../types';
+import fs from 'fs';
 
+import config from '../config';
 import {
-  Client
-} from "@typeit/discord";
-import config from "../config";
-import {
+  Client,
   ClientOptions
-} from "discord.js";
+} from 'discord.js';
 
-import Commands from "./Commands";
-import Command from "./Command";
-import Util from "./Util";
+import Commands from './Commands';
+import Command from './Command';
+import Util from './Util';
 
 import 'colors'
 
@@ -22,6 +20,7 @@ export default class Neptune extends Client {
   public exit_code: number | null;
   public commands: Commands;
   public util: Util;
+  public prefix: string;
 
   constructor(opts: ClientOptions) {
     // Client config
@@ -30,17 +29,12 @@ export default class Neptune extends Client {
 
     // Client variables
     this.commands = new Commands();
+    this.prefix = this.config.discord.prefix;
     this.util = new Util(this);
     this.exit_code = null;
   }
 
   // --------------------------------------------------
-
-  // Get prefix from DB
-  public get prefix() {
-    // TODO: Connect this to database
-    return this.config.discord.prefix;
-  }
 
   // Start and initalize the bot
   public start(token: string) {
@@ -107,7 +101,7 @@ export default class Neptune extends Client {
     const events = fs.readdirSync(`${this.config.dir}/Events`);
 
     // Run event
-    events.forEach((file) => {
+    events.forEach((file: any) => {
       const event = require(`../Events/${file}`).default;
 
       super.on(file.split('.')[0], (...args: any) => event.run(this, ...args));

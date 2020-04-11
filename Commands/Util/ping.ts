@@ -4,7 +4,7 @@ import Neptune from '../../Classes/Neptune';
 import path from 'path';
 import {
     Message,
-    RichEmbed
+    MessageEmbed
 } from 'discord.js';
 import Util from '../../Classes/Util';
 
@@ -32,12 +32,12 @@ export default class Cmd extends Command {
 
         // Edit with new message
         m.edit({
-            embed: new RichEmbed()
+            embed: new MessageEmbed()
                 .addField(
                     `:ping_pong: Ping my Pong`,
                     `⏱ | **Message Delay:** \`${Math.round(
                         m.createdTimestamp - msg.createdTimestamp
-                    )}ms\`\n 📡 | **Neptune:**  \`${Math.round(nep.ping)}ms\``
+                    )}ms\`\n 📡 | **Websocket:**  \`${Math.round(nep.ws.ping)}ms\``
                 )
                 .setColor(util.r_color)
         });

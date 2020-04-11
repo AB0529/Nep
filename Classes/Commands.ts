@@ -25,7 +25,7 @@ export default class Commands {
 
     // Returns commands object from map
     public get_cmd(name: string) {
-        return this.commands.get(name);
+        return this.commands.get(name) as Command;
     }
 
     // ---------------------------------------------------------------------------

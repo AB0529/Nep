@@ -1165,6 +1165,7 @@ declare module 'discord.js' {
     public readonly member: GuildMember | null;
     public status: PresenceStatus;
     public readonly user: User | null;
+    public userID: Snowflake;
     public equals(presence: Presence): boolean;
   }
 
@@ -1534,19 +1535,16 @@ declare module 'discord.js' {
     constructor(client: Client);
     public client: Client;
     public subscribers: StreamDispatcher[];
-    public readonly dispatcher: BroadcastDispatcher;
+    public readonly dispatcher?: BroadcastDispatcher;
     public play(input: string | Readable, options?: StreamOptions): BroadcastDispatcher;
+    public end(): void;
 
     public on(event: 'end', listener: () => void): this;
-    public on(event: 'error', listener: (error: Error) => void): this;
     public on(event: 'subscribe' | 'unsubscribe', listener: (dispatcher: StreamDispatcher) => void): this;
-    public on(event: 'warn', listener: (warning: string | Error) => void): this;
     public on(event: string, listener: (...args: any[]) => void): this;
 
     public once(event: 'end', listener: () => void): this;
-    public once(event: 'error', listener: (error: Error) => void): this;
     public once(event: 'subscribe' | 'unsubscribe', listener: (dispatcher: StreamDispatcher) => void): this;
-    public once(event: 'warn', listener: (warning: string | Error) => void): this;
     public once(event: string, listener: (...args: any[]) => void): this;
   }
 
@@ -2509,12 +2507,14 @@ declare module 'discord.js' {
     | 'DISCOVERABLE'
     | 'FEATURABLE'
     | 'INVITE_SPLASH'
-    | 'PUBLIC'
     | 'NEWS'
     | 'PARTNERED'
+    | 'PUBLIC'
+    | 'PUBLIC_DISABLED'
     | 'VANITY_URL'
     | 'VERIFIED'
-    | 'VIP_REGIONS';
+    | 'VIP_REGIONS'
+    | 'WELCOME_SCREEN_ENABLED';
 
   interface GuildMemberEditData {
     nick?: string;

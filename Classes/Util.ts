@@ -1,8 +1,10 @@
 import Neptune from './Neptune';
-import { Message } from 'discord.js';
+import {
+    Message,
+    MessageEmbed
+} from 'discord.js';
 
 import 'colors'
-import { RichEmbed } from 'discord.js';
 
 export default class Util {
     public nep: Neptune;
@@ -41,15 +43,38 @@ export default class Util {
 
     // Easy embed
     public async embed(content: any, m?: Message): Promise<Message> {
-        let embed = new RichEmbed().setDescription(content).setColor(this.r_color);
+        let embed = new MessageEmbed().setDescription(content).setColor(this.r_color);
 
         // Handle editing
         if (m)
-            return m.edit({
-                embed: embed
-            });
+            return m.edit({ embed });
 
-        return await this.msg.channel.send({ embed: embed });
+        return await this.msg.channel.send({ embed });
+    }
+
+    // --------------------------------------------------
+
+    public check_owner(id: string) {
+        return this.nep.config.discord.owner_id == id;
+    }
+
+    // --------------------------------------------------
+    // Convert MS time into seconds or minutes etc.
+    public ms_parser(millisec: number) {
+        let seconds = millisec / 1e3;
+        let minutes = millisec / (1e3 * 60);
+        let hours = millisec / (1e3 * 60 * 60);
+        let days = millisec / (1e3 * 60 * 60 * 24);
+
+        if (seconds < 60) {
+            return seconds + ' second(s)';
+        } else if (minutes < 60) {
+            return minutes + ' minute(s)';
+        } else if (hours < 24) {
+            return hours + ' hour(s)';
+        } else {
+            return days + ' day(s)';
+        }
     }
 
     // --------------------------------------------------
