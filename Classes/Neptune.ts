@@ -85,6 +85,8 @@ export default class Neptune extends Client {
   public stop(exit_code: number = config.codes.STOP) {
     this.util.log('Process', `Process terminating with exit code ${`${exit_code}`.yellow}`);
 
+    this.voice.connections.map((c) => c.channel.leave());
+
     process.exit(exit_code);
   }
 

@@ -53,9 +53,9 @@ export default class Util {
 
         // Handle editing
         if (m)
-            return m.edit({ embed });
+            return m.edit({ embed: embed });
 
-        return await this.msg.channel.send({ embed });
+        return await this.msg.channel.send({ embed: embed });
     }
 
     // --------------------------------------------------
@@ -123,10 +123,8 @@ export default class Util {
         
         return new Promise(async (resolve) => {
             // Don't update if the queue is the sames
-            if (q == queue) {
-                console.log('Same')
+            if (q == queue) 
                 return resolve(queue);
-            }
             
             // Update old queue with new one and return it
             this.nep.servers.findOneAndUpdate({ guild_id: this.msg.guild.id }, {$set: {queue: queue}}, (err, resp) => {
@@ -147,8 +145,12 @@ export default class Util {
     // Plays the queue
     public play_queue(q: Queue) {
         // Handle queue finish
-        if (q.length == 0)
-            return this.nep.util.embed(`<:Sharcat:390652483577577483> | Queue has **finished playing**, see ya' later alligator!`)
+        if (!q[0])
+            return this.msg.channel.send({
+                embed: new MessageEmbed()
+                    .setDescription(`<:Sharcat:390652483577577483> | Queue has **finished playing**, see ya' later alligator!`)
+                    .setColor(this.r_color)
+                    })
                     .then(() => {
                         let vc: VoiceConnection = this.msg.guild.voice.connection;
 
@@ -159,7 +161,7 @@ export default class Util {
                         if (vc != null)
                             this.msg.guild.me.voice.channel.leave();
 
-                    }).catch((err) => this.error(`VC Leave Error:\n${err}`, 'play_queue()'));
+                    }).catch((err) => this.error(`VC Leave Error:\n${err.stack}`, 'play_queue()'));
         
         // Join VC
         new Promise(async (resolve) => {
@@ -177,9 +179,7 @@ export default class Util {
         }).then((c: any) => {
             // Sound handler
             let video = q[0].video.url;
-            let stream = ytdl(video, {
-                filter: 'audioonly'
-            });
+            let stream = ytdl(video);
             let dispatcher: StreamDispatcher = c.play(stream);
 
             this.msg.channel.send({
@@ -195,15 +195,14 @@ export default class Util {
             dispatcher.setVolume(!q.volume ? 1 : Math.floor(q.volume) / 100);
 
             // Handle sound end
-            dispatcher.on('end', () => {
+            dispatcher.on('finish', () => {
                 setTimeout(async () => {
-                    q.shift();
-                    q = await this.update_queue(q);
-                    await this.play_queue(q);
+                    q = await this.update_queue([...q.slice(0, 0), ...q.slice(0 + 1)]);
+                    this.play_queue(q);
                 }, 1e3);
             });
             // Handle sound error
-            dispatcher.on('error', (err) => this.error(`Dispatcher error:\n${err}`, 'play_queue()'));
+            dispatcher.on('error', (err) => this.error(`Dispatcher error:\n${err}`, 'play_queue()', true));
 
         });
 
