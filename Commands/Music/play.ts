@@ -19,8 +19,8 @@ export default class Cmd extends Command {
             name: path.basename(__filename, '.ts'),
             help: `Play the queue or song.`,
             long_help: `Plays the current queue or plays a link or search term.`,
-            usage: [`- ${cmd} [Search/Link]`],
-            examples: [`- ${cmd}`, `- ${cmd} fallen kingdom`, `-${cmd} https://www.youtube.com/watch?v=dQw4w9WgXcQ`],
+            usage: [`- ${cmd} [-d] [Search/Link]`],
+            examples: [`- ${cmd}`, `- ${cmd} fallen kingdom\nShows 5 resulsts`, `- ${cmd} -d fallen kingdom\nGets only first result`, `-${cmd} https://www.youtube.com/watch?v=dQw4w9WgXcQ`],
             category: path.dirname(__filename).split(path.sep).pop(),
             cooldown: 1e3,
             aliases: ['p'],
@@ -55,7 +55,7 @@ export default class Cmd extends Command {
             // Format the msg to send
             let formated_msg = res.result.map((v: any, i: number) => `${i + 1}) [${he.decode(v.video.title)}](${v.video.url}) **[${v.channel.name}]**`);
             // Send message collector and queue picked video
-            util.msg_collector(`**Results for** \`${args.join(' ')}\`:`, formated_msg, res.length).then((choice: any) => {
+            util.msg_collector(`**Results for** \`${util.parse_args(args.join(' '))}\`:`, formated_msg, res.length).then((choice: any) => {
                 msg.channel.send(choice);
 
                 if (choice == -1)

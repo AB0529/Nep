@@ -34,10 +34,10 @@ export default class Cmd extends Command {
 
         super(nep, {
             name: path.basename(__filename, '.ts'),
-            help: `Shows and maniuplates the queue.`,
-            long_help: `Allows for varies actions on the queue`,
-            usage: [`- ${cmd} TOOD: Add usage`],
-            examples: [`- ${cmd} TOOD: Add usage`],
+            help: `Changes and shows volume.`,
+            long_help: `Changes or shows currently running song's volume.`,
+            usage: [`- ${cmd} [1-100]`],
+            examples: [`- ${cmd}`, `- ${cmd} 69`],
             category: path.dirname(__filename).split(path.sep).pop(),
             cooldown: 3e3,
             aliases: ['vol'],
@@ -62,8 +62,8 @@ export default class Cmd extends Command {
             return util.embed(`🔊 | Current volume: \`${Math.floor(q[0].volume)})/100\`\n[${new VolumeBar(Math.floor(q[0].volume)).format()}]`);
         // Make sure args is a number
         else if (!parseInt(args[0]))
-            return util.embed(`:x: | Did you learn your numbers, because \`${args[0]}\` isn't one of them!`); 
-        // Make sure volue=me doesn't go below 0
+            return util.embed(`:x: | Did you learn your numbers, because \`${util.parse_args(args[0])}\` isn't one of them!`); 
+        // Make sure volume doesn't go below 0
         else if (parseInt(args[0]) <= 0) 
             args[0] = 1;
         

@@ -15,10 +15,10 @@ export default class Cmd extends Command {
 
         super(nep, {
             name: path.basename(__filename, '.ts'),
-            help: `Shows and maniuplates the queue.`,
-            long_help: `Allows for varies actions on the queue`,
-            usage: [`- ${cmd} TOOD: Add usage`],
-            examples: [`- ${cmd} TOOD: Add usage`],
+            help: `Skips song.`,
+            long_help: `Skips currently playing song.`,
+            usage: [`- ${cmd}`],
+            examples: [`- ${cmd}`],
             category: path.dirname(__filename).split(path.sep).pop(),
             cooldown: 3e3,
             aliases: [],

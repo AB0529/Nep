@@ -87,6 +87,13 @@ export default class Util {
 
     // --------------------------------------------------
 
+    // Shortens string to acceptable length
+    public parse_args(s: string, max_length: number = 15) {
+        return s.length > max_length ? (s = s.substring(0, max_length) + '...') : s;
+    }
+
+    // --------------------------------------------------
+
     // Adds a guild to the database
     public add_server(id: string) {
         let Server = new db.Servers({
@@ -204,6 +211,7 @@ export default class Util {
                     this.play_queue(q);
                 }, 1e3);
             });
+            dispatcher.on('finish', () => dispatcher.emit('close'));
 
             // Handle sound error
             dispatcher.on('error', (err) => this.error(`Dispatcher error:\n${err}`, 'play_queue()', true));
