@@ -4,13 +4,15 @@ import {
     MessageEmbed,
     VoiceConnection,
     StreamDispatcher,
+    MessageCollector,
 } from 'discord.js';
 import ytdl from 'ytdl-core';
 import he from 'he'
+import bent from 'bent'
 
 import 'colors'
 import db, { IServers } from '../Models/Server_Model';
-import { Queue, Video } from '../types';
+import { Queue } from '../types';
 
 export default class Util {
     public nep: Neptune;
@@ -197,12 +199,58 @@ export default class Util {
             // Handle sound end
             dispatcher.on('close', () => {
                 setTimeout(async () => {
-                    q = await this.update_queue([...q.slice(0, 0), ...q.slice(0 + 1)]);
+                    q.shift();
+                    q = await this.update_queue(q);
                     this.play_queue(q);
                 }, 1e3);
             });
+
             // Handle sound error
             dispatcher.on('error', (err) => this.error(`Dispatcher error:\n${err}`, 'play_queue()', true));
+
+        });
+
+    }
+
+    // --------------------------------------------------
+
+    // Send option for user to pick and return choice
+    public async msg_collector(category: string, message: string[], max: number) {
+        // Create the collector
+        let collector: MessageCollector = this.msg.channel.createMessageCollector((m) => m.author.id == this.msg.author.id, { time: 3e4, dispose: true });
+        let m = await this.msg.channel.send('*Loading...*');
+
+        // Send options
+        m.edit({
+            embed: new MessageEmbed()
+                .setDescription(`*Reply your wanted result*\n\n${category}\n${message.join('\n')}\n**c.** Cancel`)
+                .setFooter(this.msg.author.tag, this.msg.author.displayAvatarURL())
+                .setColor(this.r_color)
+        });
+        
+        return new Promise((resolve, reject) => {
+            // Handle collector end
+            collector.on('end', () => setTimeout(() => {
+                m.delete().catch((err) => reject(err));
+                reject();
+            }));
+            // Logic for parsing results
+            collector.on('collect', (msg: Message) => {
+                // Cancel
+                if (msg.content.toLowerCase() == 'c') {
+                    msg.delete().catch((err) => err);
+                    collector.stop();
+                    reject();
+                }
+                // Make sure result isn't above or below max value
+                if (!parseInt(msg.content) || parseInt(msg.content) <= 0 || parseInt(msg.content) > max)
+                    return;
+
+                // Return result
+                resolve(parseInt(msg.content));
+                msg.delete().catch((err) => err);
+                collector.stop();
+            });
 
         });
 

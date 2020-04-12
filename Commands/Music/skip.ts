@@ -20,7 +20,7 @@ export default class Cmd extends Command {
             usage: [`- ${cmd} TOOD: Add usage`],
             examples: [`- ${cmd} TOOD: Add usage`],
             category: path.dirname(__filename).split(path.sep).pop(),
-            cooldown: 1e3,
+            cooldown: 3e3,
             aliases: [],
             locked: false,
             allow_dm: false
@@ -41,7 +41,8 @@ export default class Cmd extends Command {
         // Skip first item
         return util.embed(`⏩ | \`${he.decode(q[0].video.title)}\` has been skipped by **[${msg.author}]**!`).then(async () => {
             // Update queue
-			q = await util.update_queue([...q.slice(0, 0), ...q.slice(0 + 1)]);
+            q.shift();
+			q = await util.update_queue(q);
             
 			let dispatcher = (vc.player as any).dispatcher;
 
