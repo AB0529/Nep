@@ -65,6 +65,7 @@ export default class Cmd extends Command {
                 let v = res.result[choice - 1];
     
                 v.author = msg.author.id;
+                v.volume = 100;
                 
                 // Push result to queue
                 queue.push(v);
@@ -92,6 +93,7 @@ export default class Cmd extends Command {
             let v = res.result[0];
     
             v.author = msg.author.id;
+            v.volume = 100;
             
             // Push first result only
             queue.push(v);

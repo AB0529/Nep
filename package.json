@@ -1,0 +1,35 @@
+{
+  "name": "neptune",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@discordjs/opus": "^0.1.0",
+    "@types/bent": "^7.0.2",
+    "@types/he": "^1.1.1",
+    "@types/node": "^13.11.1",
+    "bent": "^7.1.2",
+    "colors": "^1.4.0",
+    "curl": "^0.1.4",
+    "discord.js": "^12.1.1",
+    "he": "^1.2.0",
+    "mongoose": "^5.9.7",
+    "node-opus": "^0.3.3",
+    "tslib": "^1.11.1",
+    "ytdl-core": "^2.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MoistSenpai/Nep.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MoistSenpai/Nep/issues"
+  },
+  "homepage": "https://github.com/MoistSenpai/Nep#readme"
+}

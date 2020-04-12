@@ -37,7 +37,8 @@ export interface Result {
     video:     VideoClass;
     channel:   Channel;
     thumbnail: Thumbnail;
-    author: string
+    author?: string
+    volume?: number
 }
 
 export interface Channel {

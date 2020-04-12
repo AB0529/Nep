@@ -181,7 +181,7 @@ export default class Util {
         }).then((c: any) => {
             // Sound handler
             let video = q[0].video.url;
-            let stream = ytdl(video);
+            let stream = ytdl(video, {filter: 'audioonly'});
             let dispatcher: StreamDispatcher = c.play(stream);
 
             this.msg.channel.send({
