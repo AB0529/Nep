@@ -59,7 +59,7 @@ export default class Cmd extends Command {
         
         // If args don't exist, show volume of top item
         if (!args[0])
-            return util.embed(`🔊 | Current volume: \`${Math.floor(q[0].volume)})/100\`\n[${new VolumeBar(Math.floor(q[0].volume)).format()}]`);
+            return util.embed(`🔊 | Current volume: \`${Math.floor(q[0].volume)}/100\`\n[${new VolumeBar(Math.floor(q[0].volume)).format()}]`);
         // Make sure args is a number
         else if (!parseInt(args[0]))
             return util.embed(`:x: | Did you learn your numbers, because \`${util.parse_args(args[0])}\` isn't one of them!`); 

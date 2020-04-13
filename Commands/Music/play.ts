@@ -56,8 +56,6 @@ export default class Cmd extends Command {
             let formated_msg = res.result.map((v: any, i: number) => `${i + 1}) [${he.decode(v.video.title)}](${v.video.url}) **[${v.channel.name}]**`);
             // Send message collector and queue picked video
             util.msg_collector(`**Results for** \`${util.parse_args(args.join(' '))}\`:`, formated_msg, res.length).then((choice: any) => {
-                msg.channel.send(choice);
-
                 if (choice == -1)
                     return;
     

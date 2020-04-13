@@ -6,9 +6,9 @@ import {
     StreamDispatcher,
     MessageCollector,
 } from 'discord.js';
-import ytdl from 'ytdl-core';
 import he from 'he'
-import bent from 'bent'
+// import ytdl from '@favware/ytdl-prismplayer'
+import ytdl from 'ytdl-core'
 
 import 'colors'
 import db, { IServers } from '../Models/Server_Model';
@@ -151,6 +151,62 @@ export default class Util {
 
     // --------------------------------------------------
 
+    // Returns audiostream from video link
+    // public async get_stream(url: string) {
+    //     let err, info = await ytdl.getInfo(url);
+
+    //     // Handle error
+    //     if (err)
+    //         return this.error(`Stream error:\n${err}`, `get_stream()`);
+        
+    //     const filter = (format) => {
+    //         return format.codecs === 'opus' && format.container === 'webm' && format.audioSampleRate == 48000;
+    //     }
+    //     const best_format = (formats) => {
+    //         formats = formats
+    //             .filter(format => format.audioBitrate)
+    //             .sort((a, b) => b.audioBitrate - a.audioBitrate);
+
+    //         return formats.find(format => !format.bitrate) || formats[0];
+    //     };
+    //     const format = info.formats.find(filter);
+    //     const c_dem = format && (info.length_seconds as any) != 0;
+
+    //     if (c_dem) {
+    //         let d = new prism.opus.WebmDemuxer();
+
+    //         return ytdl.downloadFromInfo(info, {filter: 'audioonly'})
+    //             .pipe(d)
+    //             .on('end', () => d.destroy());
+    //     }
+
+    //     const trans = new prism.FFmpeg({
+    //         args: [
+    //             '-reconnect', '1',
+    //             '-reconnect_streamed', '1',
+    //             '-reconnect_delay_max', '5',
+    //             '-i',
+    //             best_format(info.formats).url,
+    //             '-analyzeduration', '0',
+    //             '-loglevel', '0',
+    //             '-f', 's16le',
+    //             '-ar', '48000',
+    //             '-ac', '2',
+    //         ]
+    //     });
+    //     const opus = new prism.opus.Encoder({rate: 48000, channels: 2, frameSize: 960});
+    //     const stream = trans.pipe(opus);
+
+    //     stream.on('close', () => {
+    //         trans.destroy();
+    //         opus.destroy();
+    //     });
+
+    //     return stream;
+    // }
+
+    // --------------------------------------------------
+
     // Plays the queue
     public play_queue(q: Queue) {
         // Handle queue finish
@@ -161,10 +217,7 @@ export default class Util {
                     .setColor(this.r_color)
                     })
                     .then(() => {
-                        let vc: VoiceConnection = this.msg.guild.voice.connection;
-
-                        // Reset volume
-                        q.volume = 100;
+                        let vc: VoiceConnection = this.msg.guild.me.voice.connection;
 
                         // Leave VC
                         if (vc != null)
@@ -185,11 +238,10 @@ export default class Util {
             }
 
             resolve(vc);
-        }).then((c: any) => {
+        }).then(async (c: any) => {
             // Sound handler
             let video = q[0].video.url;
-            let stream = ytdl(video, {filter: 'audioonly'});
-            let dispatcher: StreamDispatcher = c.play(stream);
+            let dispatcher: StreamDispatcher = c.play(ytdl(video, {filter: 'audioonly'}));
 
             this.msg.channel.send({
                 embed: new MessageEmbed()
@@ -211,7 +263,7 @@ export default class Util {
                     this.play_queue(q);
                 }, 1e3);
             });
-            dispatcher.on('finish', () => dispatcher.emit('close'));
+            // dispatcher.on('finish', () => dispatcher.emit('close'));
 
             // Handle sound error
             dispatcher.on('error', (err) => this.error(`Dispatcher error:\n${err}`, 'play_queue()', true));

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@discordjs/opus": "^0.1.0",
+    "@favware/ytdl-prismplayer": "^2.5.1",
     "@types/bent": "^7.0.2",
     "@types/he": "^1.1.1",
     "@types/node": "^13.11.1",
@@ -15,6 +15,7 @@
     "he": "^1.2.0",
     "mongoose": "^5.9.7",
     "node-opus": "^0.3.3",
+    "prism-media": "^1.2.1",
     "tslib": "^1.11.1",
     "ytdl-core": "^2.0.1"
   },
