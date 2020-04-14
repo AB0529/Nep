@@ -118,8 +118,8 @@ export default class Cmd extends Command {
 				else if (!q[parseInt(rm) - 1])
 					return util.embed(`:x: | \`${util.parse_args(rm)}\` **doesn't exist** in the queue! To see, do \`${nep.prefix}queue show\`!`); 
 				// Permissions
-				else if (msg.author.id != q[parseInt(rm) - 1].author && !msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id)
-					return util.embed(`:x: | You can only remove if you:\n- \`Queued the item\`\n- \`Have admin permissions\`\n- \`Have NeptuneDJ role\``);
+				else if (!(msg.author.id != q[parseInt(rm) - 1].author && !msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id))
+					return util.embed(`:x: | You can only do this if you:\n- \`Queued the item\`\n- \`Have admin permissions\`\n- \`Have NeptuneDJ role\``);
 				// Handle removing playing item
 				else if (vc && parseInt(rm) - 1 == 0) {
 					util.embed(`❎ | [${he.decode(q[parseInt(rm) - 1].video.title)}](${q[parseInt(rm) - 1].video.url}) has been removed by **[${msg.author}]**! 1`);
@@ -161,9 +161,11 @@ export default class Cmd extends Command {
 					return arr;
 				};
 
+				console.log(!msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id)
+
 				// Permissions
-				if (!msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id)
-					return util.embed(`:x: | You can only remove if you:\n- \`Have admin permissions\`\n- \`Have NeptuneDJ role\``);
+				if (!(!msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id))
+					return util.embed(`:x: | You can only do this if you:\n- \`Have admin permissions\`\n- \`Have NeptuneDJ role\``);
 				// Make sure queue has more than 1 item
 				else if (q.length <= 1)
 					return util.embed(`:x: | There's no **shuffling to do**! To add more items, try \`${nep.prefix}play\`!`);

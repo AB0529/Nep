@@ -61,7 +61,7 @@ export default class Cmd extends Command {
         if (!args[0])
             return util.embed(`🔊 | Current volume: \`${Math.floor(q[0].volume)}/100\`\n[${new VolumeBar(Math.floor(q[0].volume)).format()}]`);
         // Handle permissions
-        else if (msg.author.id != q[0].author && !msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id)
+        else if (!(msg.author.id != q[0].author && !msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id))
             return util.embed(`:x: | You can do this if you:\n- \`Queued this\`\n- \`Have admin permissions\`\n- \`Have NeptuneDJ role\``);
         // Make sure args is a number
         else if (!parseInt(args[0]))

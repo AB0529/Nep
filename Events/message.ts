@@ -43,20 +43,23 @@ const run = async (nep: Neptune, msg: Message) => {
 	// Make sure command exists
 	if (!command)
 		return;
-	// Handle cooldown
-	else if (command.cooldown.has(msg.author.id)) return;
-	// Ignore cooldown for owner
-	else if (!is_owner)
-		return msg.channel.send({
-			embed: new MessageEmbed()
-				.setDescription(
-					`⏲ | *Please wait* \`${nep.util.ms_parser(
-						command.config.cooldown
-					)}\` *until using this command again!*`
-				)
-				.setColor(nep.util.r_color)
-				.setFooter(msg.author.tag, msg.author.displayAvatarURL())
-		}).then(() => command.sentCooldownMessage.add(msg.author.id));
+    // Handle cooldown
+    else if (command.cooldown.has(msg.author.id)) {
+        if (command.sentCooldownMessage.has(msg.author.id)) 
+            return;
+        else if (!is_owner)
+            return msg.channel.send({
+            embed: new MessageEmbed()
+                .setDescription(
+                    `⏲ | *Please wait* \`${nep.util.ms_parser(
+                        command.config.cooldown
+                    )}\` *until using this command again!*`
+                )
+                .setColor(nep.util.r_color)
+                .setFooter(msg.author.tag, msg.author.displayAvatarURL())
+        })
+        .then(() => command.sentCooldownMessage.add(msg.author.id));
+    }
 
 	// Handle commands
 	try {

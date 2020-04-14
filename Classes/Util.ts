@@ -5,6 +5,7 @@ import {
     VoiceConnection,
     StreamDispatcher,
     MessageCollector,
+    Role,
 } from 'discord.js';
 import he from 'he'
 // import ytdl from '@favware/ytdl-prismplayer'
@@ -284,7 +285,17 @@ export default class Util {
 
     // Finds a role in a guild
     public async find_role(role: string) {
-        return this.msg.member.roles.cache.find(r => r.name.toLowerCase() == role.toLowerCase());
+        let r = this.msg.guild.roles.cache.find((r) => r.name.toLowerCase() == role.toLowerCase());
+
+        // Role doesn't exist
+        if (!r)
+            return false;
+        // Member doesn't have role
+        else if (!this.msg.member.roles.resolve(r.id))
+            return false;
+
+        // Has role
+        return true;
     }
 
     // --------------------------------------------------

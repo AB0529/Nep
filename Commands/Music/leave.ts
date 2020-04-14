@@ -33,7 +33,7 @@ export default class Cmd extends Command {
         if (!vc.connection)
             return util.embed(`:x: | I'm **not in a voice channel**, go away!`);
         // Permissions
-        if (!msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id)
+        if (!(!msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id))
             return util.embed(`:x: | You can only do this if you:\n- \`Have admin permissions\`\n- \`Have NeptuneDJ role\``);
         
         // Disconnect
