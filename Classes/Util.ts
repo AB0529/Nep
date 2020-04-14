@@ -256,14 +256,22 @@ export default class Util {
             dispatcher.setVolume(!q.volume ? 1 : Math.floor(q.volume) / 100);
 
             // Handle sound end
-            dispatcher.on('close', () => {
+            // dispatcher.on('close', () => {
+                // setTimeout(async () => {
+                //     q.shift();
+                //     q = await this.update_queue(q);
+                //     this.play_queue(q);
+                // }, 1e3);
+                // this.msg.channel.send('Emit close');
+            // });
+            dispatcher.on('finish', () => {
+                // this.msg.channel.send('Emit finish');
                 setTimeout(async () => {
                     q.shift();
                     q = await this.update_queue(q);
                     this.play_queue(q);
                 }, 1e3);
             });
-            // dispatcher.on('finish', () => dispatcher.emit('close'));
 
             // Handle sound error
             dispatcher.on('error', (err) => this.error(`Dispatcher error:\n${err}`, 'play_queue()', true));
@@ -278,7 +286,7 @@ export default class Util {
     public async msg_collector(category: string, message: string[], max: number) {
         // Create the collector
         let collector: MessageCollector = this.msg.channel.createMessageCollector((m) => m.author.id == this.msg.author.id, { time: 3e4, dispose: true });
-        let m = await this.msg.channel.send('*Loading...*');
+        let m = await this.embed('*Loading...*');
 
         // Send options
         m.edit({
