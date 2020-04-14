@@ -9,6 +9,7 @@ import {
 } from 'discord.js';
 import Util from '../../Classes/Util';
 import he from 'he'
+import { Queue } from '../../types';
 
 const mf = (arg: string, flag: string) => {
     // Matches flag or -flag
@@ -41,7 +42,7 @@ export default class Cmd extends Command {
 
 		// Send help
 		if (!args[0])
-			return;
+			return util.embed(`:x: | Dude, you need **some arguments**, try \`${nep.prefix}help ${this.info.name}\` for more info!`);
 
         // Setup flags
         let flag = args[0];
@@ -76,7 +77,7 @@ export default class Cmd extends Command {
 			case mf(flag, 'purge'):
 			case mf(flag, 'qc'):
 				// Handle permissions
-				if (msg.author.id != q[0].author && !msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id)
+				if (!msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id)
 					return util.embed(`:x: | You can only do this if you:\n- \`Have admin permissions\`\n- \`Have NeptuneDJ role\``);
 				// Check if queue has items
 				else if (!q)
@@ -137,6 +138,51 @@ export default class Cmd extends Command {
 					util.update_queue(q);
 				}
 			break;
+
+			// ---------------------------------------------------------------------------
+
+			// Shuffles the queue
+			case mf(flag, 'shuffle'):
+			case mf(flag, 'rng'):
+				const shuffle = (arr: any[], t: boolean = false) => {
+					let fe = arr[0];
+
+					if (t && arr.indexOf(fe) != -1)
+						arr.shift();
+
+					for (let i = arr.length - 1; i > 0; i--) {
+						const j = Math.floor(Math.random() * (i + 1));
+						[arr[i], arr[j]] = [arr[j], arr[i]];
+					}
+
+					if (t)
+						arr.unshift(fe);
+
+					return arr;
+				};
+
+				// Permissions
+				if (!msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id)
+					return util.embed(`:x: | You can only remove if you:\n- \`Have admin permissions\`\n- \`Have NeptuneDJ role\``);
+				// Make sure queue has more than 1 item
+				else if (q.length <= 1)
+					return util.embed(`:x: | There's no **shuffling to do**! To add more items, try \`${nep.prefix}play\`!`);
+				// If playing, don't shuffle first item
+				else if (vc) {
+					util.update_queue(shuffle(q, true));
+					util.embed(`♻ | Queue has been **shuffled** by **[${msg.author}]**`);
+				} else {
+					util.update_queue(shuffle(q));
+					util.embed(`♻ | Queue has been **shuffled** by **[${msg.author}]**`);
+				}
+			break;
+
+			// ---------------------------------------------------------------------------
+
+			default:
+				util.embed(`:x: | Dude, those are **invalid arguments**, try \`${nep.prefix}help ${this.info.name}\` for more info!`);
+			break;
+
         }
 
     }
