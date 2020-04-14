@@ -282,6 +282,13 @@ export default class Util {
 
     // --------------------------------------------------
 
+    // Finds a role in a guild
+    public async find_role(role: string) {
+        return this.msg.member.roles.cache.find(r => r.name.toLowerCase() == role.toLowerCase());
+    }
+
+    // --------------------------------------------------
+
     // Send option for user to pick and return choice
     public async msg_collector(category: string, message: string[], max: number) {
         // Create the collector

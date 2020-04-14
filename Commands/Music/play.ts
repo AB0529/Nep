@@ -73,8 +73,8 @@ export default class Cmd extends Command {
 
             // Handle fail
             if (res.state == 'fail')
-                return util.error(`Search Error:\n${res.result}`, 'ge_choice() - play.ts');
-            
+                return util.error(`Search Error:\n${res.result}`, 'get_choice() - play.ts');
+
             // Format videos as message to send
             let fmsg = res.result.map((v, i) => `${i + 1}) [${he.decode(v.video.title)}](${v.video.url}) **[${v.channel.name}]**`);
             // Start collector and get choice
@@ -84,7 +84,7 @@ export default class Cmd extends Command {
                     if (choice == -1)
                         return;
                     // Get the video
-                    let v = res.resulst[choice - 1];
+                    let v = res.result[choice - 1]
                     
                     // Push video to queue
                     v.author = msg.author.id;
@@ -93,7 +93,6 @@ export default class Cmd extends Command {
                     q.push(v);
                     util.update_queue(q);
 
-                            
                     msg.channel.send({
                         embed: new MessageEmbed()
                         .setDescription(
@@ -103,7 +102,7 @@ export default class Cmd extends Command {
                         .setColor(util.r_color)
                     });
 
-                }).catch((err) => err);
+                }).catch((err) => util.error(`Idk Error:\n${err}`, 'get_choice() - play.ts'));
 		};
 		// ------------------------------------------
 		// Plays first resulst

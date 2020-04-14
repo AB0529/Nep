@@ -37,7 +37,10 @@ export default class Cmd extends Command {
         // Handle no VC
         else if (!vc)
             return util.embed(`:x: | I'm not **palying anything** go away!`);
-        
+        // Handle permissions
+        else if (msg.author.id != q[0].author && !msg.member.hasPermission('ADMINISTRATOR') && !util.find_role('NeptuneDJ') && msg.author.id != nep.config.discord.owner_id)
+            return util.embed(`:x: | You can only do this if you:\n- \`Queued this\`\n- \`Have admin permissions\`\n- \`Have NeptuneDJ role\``);
+
         // Skip first item
         return util.embed(`⏩ | \`${he.decode(q[0].video.title)}\` has been skipped by **[${msg.author}]**!`).then(async () => {
             // Update queue
